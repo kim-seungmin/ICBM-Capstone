@@ -7,13 +7,13 @@
 #define TRIG_R 13 //TRIG 핀 설정 (초음파 보내는 핀)
 #define ECHO_R 12 //ECHO 핀 설정 (초음파 받는 핀)
 
-#define Dir1Pin_A  2      // 제어신호 1핀
-#define Dir2Pin_A  3      // 제어신호 2핀
-#define SpeedPin_A  10    // PWM제어를 위한 핀
+#define Dir1Pin_A  2      // 모터좌 1핀
+#define Dir2Pin_A  3      // 모터좌 2핀
+#define SpeedPin_A  10    // 모터좌 PWM제어를 위한 핀
 
-#define Dir1Pin_B  4      // 제어신호 1핀
-#define Dir2Pin_B  5      // 제어신호 2핀
-#define SpeedPin_B  11    // PWM제어를 위한 핀
+#define Dir1Pin_B  4      // 모터우 1핀
+#define Dir2Pin_B  5      // 모터우 2핀
+#define SpeedPin_B  11    // 모터우 PWM제어를 위한 핀
 
 ThreadController controller = ThreadController();
 
@@ -22,7 +22,7 @@ Thread SenserRightThread = Thread();
 
 SimpleTimer Timer;
 
-void leftcalc() {
+void leftcalc() {                         //왼쪽 센서
   analogWrite(SpeedPin_A, 0); 
   long sonaTime;
 
@@ -37,7 +37,7 @@ void leftcalc() {
   TimeToDistance(sonaTime, "L"); 
 }
 
-void rightcalc() {
+void rightcalc() {                      //오른쪽 센서
   analogWrite(SpeedPin_B, 0); 
   long sonaTime;
 
@@ -54,14 +54,9 @@ void rightcalc() {
 
 void TimeToDistance(int sonaTime, String LR){
   int distance;
-  //34000*초음파가 물체로 부터 반사되어 돌아오는0시간 /1000000 / 2
-  //초음파센서의 거리값이 위 계산값과 동일하게 Cm로 환산
-  distance = (sonaTime * 17 / 1000)/6; //최대거리 30 5단계로 나눔 6이상이면버림
-  //PC모니터로 초음파 거리값을 확인
-
+  distance = (sonaTime * 17 / 1000)/6; //34000*sonaTime /1000000 / 2 -> Cm, 최대거리 30 5단계로 나눔 6이상이면버림                                       
   
-  Serial.println("\nDistance "+LR+": "+ sonaTime * 17 / 1000 +"cm "+ distance+" Level");//측정된 물체로부터 거리값(5단계) 출력
-
+  Serial.println("\nDistance "+LR+": "+ sonaTime * 17 / 1000 +"cm "+ distance+" Level");  //측정된 물체로부터 거리값(5단계) 출력
   
   if(distance<5&&distance>-1){
     distanceToVolt(LR, distance);    
@@ -83,7 +78,7 @@ void distanceToVolt(String place, int len){
 }
 //--------------------------------------------------------------------
 void setup() {
-  Serial.begin(9600); //시리얼 통신을 정의(모니터로 센서값을 확인)
+  Serial.begin(9600);                     //시리얼 통신을 정의(모니터로 센서값을 확인)
   pinMode(TRIG_L, OUTPUT);
   pinMode(ECHO_L, INPUT);
   pinMode(TRIG_R, OUTPUT);
